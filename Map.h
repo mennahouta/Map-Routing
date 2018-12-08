@@ -14,13 +14,23 @@ const int N = 2e5+5; //maximum # of nodes, not actually used anywhere
 class Map
 {
 	//graph
-public:
 	int n; //number of nodes 
 	int m; //number of edges
-	vector<pair<ld, ld>>node; //node[id] {X, Y}
-	vector<vector<pair<int, pair<ld, ld>>>>g; // g[id1] {id2, {Length, Time}}
+	vector<pair<ld, ld>> node; //node[id] {X, Y}
+	vector<vector<pair<int, pair<ld, ld>>>> g; // g[id1] {id2, {Length, Time}}
+
+public:
+	//query related data
+	pair<double, double> source, destination;
+	double maximumWalkingDist;
 
 	Map(string fileName); //read + create
-	friend class Query;
+	void viewMap();
+	void solveQuery(pair<double, double>, pair<double, double>, double);
+
+	//starts/ends + add nodes (Menna)
+	//dijkstra (Eman)
+	//remove nodes (Menna)
+
 	~Map();
 };
