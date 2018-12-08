@@ -16,7 +16,7 @@ class Map
 	//graph
 	int n; //number of nodes 
 	int m; //number of edges
-	vector<pair<ld, ld>> node; //node[id] {X, Y}
+	vector<pair<ld, ld>> nodes; //node[id] {X, Y}
 	vector<vector<pair<int, pair<ld, ld>>>> g; // g[id1] {id2, {Length, Time}}
 
 public:
