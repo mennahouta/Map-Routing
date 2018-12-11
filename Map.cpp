@@ -115,7 +115,7 @@ void Map::restoreMap() {
 		g[nodeID].pop_back();
 	}
 
-    //removing the edges of the start/end nodes from the graph
+        //removing the edges of the start/end nodes from the graph
 	g[n].clear();
 	g[n + 1].clear();
 }
