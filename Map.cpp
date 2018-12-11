@@ -2,7 +2,7 @@
 #include<queue>
 #include <functional> //for the greater in priority queue
 typedef pair<pair<ld, ld>, int>pairr;
-using namespace std; 
+using namespace std;
 
 Map::Map(string fileName)
 {
@@ -56,7 +56,7 @@ void Map::viewMap(){
 	cout << '\n';
 }
 
-void Map::solveQuery(pair<double, double> d, pair<double, double> s, double r) {
+void Map::solveQuery(pair<ld, ld> d, pair<ld, ld> s, ld r) {
 	destination = d;
 	source = s;
 	maximumWalkingDist = r * 1000; //r is in meters, and the program uses kilometers
@@ -70,7 +70,7 @@ void Map::editMap() {
 	starts.clear();
 	ends.clear();
 
-	nodes[n] = source; 
+	nodes[n] = source;
 	nodes[n + 1] = destination;
 
 	ld x1, y1, x2, y2, dist, time;
@@ -114,14 +114,16 @@ void Map::restoreMap() {
 	for (int nodeID : ends) {
 		g[nodeID].pop_back();
 	}
+
+    //removing the edges of the start/end nodes from the graph
 	g[n].clear();
 	g[n + 1].clear();
 }
 
 pair<ld,ld> Map::dijkstra(int s, int dest)
 {
-	vector<double>minimum_time(g.size() + 1); //vector that has minimum time from source to every vertex
-	vector<double>distance(g.size() + 1);//vector of distance from source to each node
+	vector<ld>minimum_time(g.size() + 1); //vector that has minimum time from source to every vertex
+	vector<ld>distance(g.size() + 1);//vector of distance from source to each node
 	vector<int>parent_node(g.size() + 1);
 	vector<bool>visited(minimum_time.size() + 1);
 
@@ -132,13 +134,13 @@ pair<ld,ld> Map::dijkstra(int s, int dest)
 
 	priority_queue<pairr, vector<pairr>, greater<pairr> >pq; //minimum heap
 	pq.push({{ 0,0 }, s}); //push time, length, node of source node
-	parent_node[s] = -1; //parent of source doesn't exist 
+	parent_node[s] = -1; //parent of source doesn't exist
 	while (!pq.empty())
 	{
 		ld time = pq.top().first.first;
 		ld length = pq.top().first.second;
 		int node = pq.top().second;
-		
+
 		pq.pop();
 		visited[node] = 1;
 
@@ -156,7 +158,7 @@ pair<ld,ld> Map::dijkstra(int s, int dest)
 				minimum_time[child_node] = minimum_time[node] + child_time;
 				distance[child_node] = distance[node] + child_distance;
 				pq.push({ {minimum_time[child_node],distance[child_node]},child_node });
-				parent_node[child_node] = node; //update parent of the this node 
+				parent_node[child_node] = node; //update parent of the this node
 			}
 		}
 	}
