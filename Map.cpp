@@ -115,6 +115,10 @@ void Map::restoreMap() {
 	for (int nodeID : ends) {
 		g[nodeID].pop_back();
 	}
+	
+	//removing the edges of the start/end node from the graph
+	g[n].clear();
+	g[n + 1].clear();
 }
 
 pair<ld,ld> Map::dijkstra(int s, int dest)
