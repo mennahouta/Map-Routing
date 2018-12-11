@@ -10,7 +10,6 @@
 using namespace std;
 
 typedef long double ld;
-const int N = 2e5+5; //maximum # of nodes, not actually used anywhere
 
 class Map
 {
@@ -27,12 +26,12 @@ class Map
 
 public:
 	//query related data
-	pair<double, double> source, destination;
-	double maximumWalkingDist;
+	pair<ld, ld> source, destination;
+	ld maximumWalkingDist;
 
 	Map(string fileName); //read input + create graph
 	void viewMap();
-	void solveQuery(pair<double, double>, pair<double, double>, double);
+	void solveQuery(pair<ld, ld>, pair<ld, ld>, ld);
 	void editMap();
 	void restoreMap();
 	pair<ld, ld>dijkstra(int,int);
