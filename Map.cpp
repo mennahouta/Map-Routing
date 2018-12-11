@@ -1,4 +1,8 @@
 #include "Map.h"
+#include<queue>
+#include <functional> //for the greater in priority queue
+typedef pair<pair<ld, ld>, int>pairr;
+using namespace std; 
 
 Map::Map(string fileName)
 {
@@ -58,7 +62,9 @@ void Map::solveQuery(pair<double, double> d, pair<double, double> s, double r) {
 	maximumWalkingDist = r * 1000; //r is in meters, and the program uses kilometers
 
 	editMap();
-	//call dijkstra
+	pair<ld,ld> answer  = dijkstra(n,n+1);
+	cout << "Source is " << n << " and destination is " << n + 1 << endl;
+	cout << "Shortest time between both is " << answer.first << " and distance between then equal " << answer.second << endl;
 	restoreMap();
 }
 
@@ -109,4 +115,65 @@ void Map::restoreMap() {
 	}
 }
 
+pair<ld,ld> Map::dijkstra(int s, int dest)
+{
+	vector<double>minimum_time(g.size() + 1); //vector that has minimum time from source to every vertex
+	vector<double>distance(g.size() + 1);//vector of distance from source to each node
+	vector<int>parent_node(g.size() + 1);
+	vector<bool>visited(minimum_time.size() + 1);
+
+	for (int i = 0; i < minimum_time.size(); i++)//initialize time to infinity
+		minimum_time[i] = 1e12;
+
+	minimum_time[s] = 0; //time to source equal 0
+
+	priority_queue<pairr, vector<pairr>, greater<pairr> >pq; //minimum heap
+	pq.push({{ 0,0 }, s}); //push time, length, node of source node
+	parent_node[s] = -1; //parent of source doesn't exist 
+	while (!pq.empty())
+	{
+		ld time = pq.top().first.first;
+		ld length = pq.top().first.second;
+		int node = pq.top().second;
+		
+		pq.pop();
+		visited[node] = 1;
+
+		for (int i = 0; i < g[node].size(); i++) //add children of current node
+		{
+			int child_node = g[node][i].first;
+			ld child_distance = g[node][i].second.first;
+			ld child_time = g[node][i].second.second;
+
+			if (visited[child_node])
+				continue;
+
+			if (minimum_time[child_node] > minimum_time[node] + child_time)
+			{
+				minimum_time[child_node] = minimum_time[node] + child_time;
+				distance[child_node] = distance[node] + child_distance;
+				pq.push({ {minimum_time[child_node],distance[child_node]},child_node });
+				parent_node[child_node] = node; //update parent of the this node 
+			}
+		}
+	}
+
+	build_path(parent_node, dest);
+	pair<ld, ld>answer = { minimum_time[dest]*60,distance[dest]};
+	return answer;
+}
+
+void Map::build_path(vector<int>parents, int destination_node)
+{
+	nodes_path.clear();
+	nodes_path.resize(0);
+
+	int node = parents[destination_node];
+	nodes_path.push_front(destination_node);
+	while (node != -1)
+	{
+		nodes_path.push_front(node);
+		node = parents[node];
+	}
+}
 Map::~Map() {}
