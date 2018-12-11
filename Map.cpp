@@ -12,23 +12,26 @@ Map::Map(string fileName)
 		file >> n; // Read the first number in the file :: number of nodes
 		nodes.resize(n + 5); // Set the nodes and the graph to have the the N nodes
 		g.resize(n + 5);	// and extra nodes -needed when pushing extra nodes later
+		int id;
+		ld x, y;
 		for(int i = 0; i < n; i++) {
-			int id;
-			ld x, y;
 			file >> id >> x >> y;
 			// set the value of the cell to the pair the was read
-			nodes[id] = make_pair(x, y);
+			nodes[id] = {x, y};
 		}
 
 		file >> m; // Read the number of edges
+		int u, v;
+		ld length, speed, time;
 		for(int i = 0; i < m; i++) {
-			int u, v; ld length, speed;
 			file >> u >> v >> length >> speed;
+
 			// Calculate the time -> the weight needed in the problem
-			ld time = length / speed;
+			time = length / speed;
+
 			// Undirected graph, hence the pushing in both nodes
-			g[u].push_back(make_pair(v, make_pair(length, time)));
-			g[v].push_back(make_pair(u, make_pair(length, time)));
+			g[u].push_back({v, {length, time}});
+			g[v].push_back({u, {length, time}});
 		}
 		file.close();
 	}
@@ -52,11 +55,64 @@ void Map::viewMap(){
 void Map::solveQuery(pair<double, double> d, pair<double, double> s, double r) {
 	destination = d;
 	source = s;
-	maximumWalkingDist = r;
+	maximumWalkingDist = r * 1000; //r is in meters, and the program uses kilometers
 
-	//CALL starts/ends + add nodes
-	//CALL dijkstra
-	//CALL remover nodes
+	editMap();
+	//call dijkstra
+	restoreMap();
+}
+
+void Map::editMap() {
+	nodes[n] = source; 
+	nodes[n + 1] = destination;
+
+	ld x1, y1, x2, y2, dist, time;
+	for (int i = 0; i < n; i++) {
+		x1 = nodes[i].first;
+		y1 = nodes[i].second;
+
+		//checking if nodes[i] is a possible start position
+		x2 = source.first;
+		y2 = source.second;
+		dist = (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2);
+		dist = sqrt(dist);
+		if (dist <= maximumWalkingDist) {
+			time = dist / 5;
+			g[n].push_back({i, {dist, time}});
+			g[i].push_back({n, {dist, time}});
+			starts.push_back(i);
+		}
+
+		//checking if nodes[i] is a possible end position
+		x2 = destination.first;
+		y2 = destination.second;
+		dist = (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2);
+		dist = sqrt(dist);
+		if (dist <= maximumWalkingDist) {
+			time = dist / 5;
+			g[n + 1].push_back({i, {dist, time}});
+			g[i].push_back({n + 1, {dist, time}});
+			ends.push_back(i);
+		}
+	}
+}
+
+void Map::restoreMap() {
+
+	//removing edges from source to possible starts
+	for (int nodeID : starts) {
+		g[nodeID].pop_back();
+	}
+
+
+	//removing edges from possible ends to destination
+	for (int nodeID : ends) {
+		g[nodeID].pop_back();
+	}
+
+	//removing source and destination from the vector of nodes
+	nodes.pop_back();
+	nodes.pop_back();
 }
 
 Map::~Map() {}

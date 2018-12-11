@@ -19,18 +19,20 @@ class Map
 	vector<pair<ld, ld>> nodes; //node[id] {X, Y}
 	vector<vector<pair<int, pair<ld, ld>>>> g; // g[id1] {id2, {Length, Time}}
 
+	vector<int> starts; //ids of possible start positions
+	vector<int> ends; //ids of possible end positions
+
 public:
 	//query related data
 	pair<double, double> source, destination;
 	double maximumWalkingDist;
 
-	Map(string fileName); //read + create
+	Map(string fileName); //read input + create graph
 	void viewMap();
 	void solveQuery(pair<double, double>, pair<double, double>, double);
-
-	//starts/ends + add nodes (Menna)
+	void editMap();
+	void restoreMap();
 	//dijkstra (Eman)
-	//remove nodes (Menna)
 
 	~Map();
 };
