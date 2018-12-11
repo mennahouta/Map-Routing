@@ -159,7 +159,7 @@ pair<ld,ld> Map::dijkstra(int s, int dest)
 	}
 
 	build_path(parent_node, dest);
-	pair<ld, ld>answer = { minimum_time[dest],distance[dest]};
+	pair<ld, ld>answer = { minimum_time[dest]*60,distance[dest]};
 	return answer;
 }
 
