@@ -69,6 +69,8 @@ void Map::solveQuery(pair<double, double> d, pair<double, double> s, double r) {
 }
 
 void Map::editMap() {
+	starts.clear();
+	ends.clear();
 	nodes[n] = source; 
 	nodes[n + 1] = destination;
 
