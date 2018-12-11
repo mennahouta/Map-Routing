@@ -165,6 +165,15 @@ pair<ld,ld> Map::dijkstra(int s, int dest)
 
 void Map::build_path(vector<int>parents, int destination_node)
 {
-	
+	nodes_path.clear();
+	nodes_path.resize(0);
+
+	int node = parents[destination_node];
+	nodes_path.push_front(destination_node);
+	while (node != -1)
+	{
+		nodes_path.push_front(node);
+		node = parents[node];
+	}
 }
 Map::~Map() {}
