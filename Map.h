@@ -6,6 +6,7 @@
 #include<sstream>
 #include<fstream>
 #include<string>
+#include<queue>
 using namespace std;
 
 typedef long double ld;
@@ -18,9 +19,11 @@ class Map
 	int m; //number of edges
 	vector<pair<ld, ld>> nodes; //node[id] {X, Y}
 	vector<vector<pair<int, pair<ld, ld>>>> g; // g[id1] {id2, {Length, Time}}
-
+	
 	vector<int> starts; //ids of possible start positions
 	vector<int> ends; //ids of possible end positions
+
+	deque<int>nodes_path; // path of one destination node per query
 
 public:
 	//query related data
@@ -32,7 +35,7 @@ public:
 	void solveQuery(pair<double, double>, pair<double, double>, double);
 	void editMap();
 	void restoreMap();
-	//dijkstra (Eman)
-
+	pair<ld, ld>dijkstra(int,int);
+	void build_path(vector<int>, int);
 	~Map();
 };
