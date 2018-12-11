@@ -28,6 +28,6 @@ int main(){
 		 }
 		 file.close();
 	 }
-
+	 system("pause");
 	 return 0;
 }
