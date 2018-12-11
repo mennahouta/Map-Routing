@@ -98,21 +98,15 @@ void Map::editMap() {
 }
 
 void Map::restoreMap() {
-
 	//removing edges from source to possible starts
 	for (int nodeID : starts) {
 		g[nodeID].pop_back();
 	}
 
-
 	//removing edges from possible ends to destination
 	for (int nodeID : ends) {
 		g[nodeID].pop_back();
 	}
-
-	//removing source and destination from the vector of nodes
-	nodes.pop_back();
-	nodes.pop_back();
 }
 
 Map::~Map() {}
