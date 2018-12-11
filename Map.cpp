@@ -63,12 +63,13 @@ void Map::solveQuery(pair<double, double> d, pair<double, double> s, double r) {
 
 	editMap();
 	pair<ld,ld> answer  = dijkstra(n,n+1);
-	cout << "Source is " << n << " and destination is " << n + 1 << endl;
-	cout << "Shortest time between both is " << answer.first << " and distance between then equal " << answer.second << endl;
 	restoreMap();
 }
 
 void Map::editMap() {
+	starts.clear();
+	ends.clear();
+
 	nodes[n] = source; 
 	nodes[n + 1] = destination;
 
@@ -113,6 +114,8 @@ void Map::restoreMap() {
 	for (int nodeID : ends) {
 		g[nodeID].pop_back();
 	}
+	g[n].clear();
+	g[n + 1].clear();
 }
 
 pair<ld,ld> Map::dijkstra(int s, int dest)
@@ -159,7 +162,18 @@ pair<ld,ld> Map::dijkstra(int s, int dest)
 	}
 
 	build_path(parent_node, dest);
+
+	int start_node = nodes_path[1];
+	int end_node = nodes_path[nodes_path.size()-2];
+
+	int walking_start = abs(distance[dest] - distance[end_node]);
+	int walking_end = distance[start_node];
+
 	pair<ld, ld>answer = { minimum_time[dest]*60,distance[dest]};
+	cout << "Time = " << answer.first << " Total Distance: " << answer.second << endl;
+	cout << "Walking time " << walking_start+walking_end << endl;
+	cout << "Vehical destince = " << abs(walking_end+walking_start - answer.second) << endl << endl;
+
 	return answer;
 }
 
