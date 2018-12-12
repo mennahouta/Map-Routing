@@ -1,8 +1,7 @@
 #include "Map.h"
-#include<queue>
-#include <functional> //for the greater in priority queue
+
+#define precision setprecision(2) << fixed
 typedef pair<pair<ld, ld>, int>pairr;
-using namespace std;
 
 Map::Map(string fileName)
 {
@@ -120,23 +119,21 @@ void Map::restoreMap() {
 	g[n + 1].clear();
 }
 
-pair<ld,ld> Map::dijkstra(int s, int dest)
-{
-	vector<ld>minimum_time(g.size() + 1); //vector that has minimum time from source to every vertex
-	vector<ld>distance(g.size() + 1);//vector of distance from source to each node
-	vector<int>parent_node(g.size() + 1);
-	vector<bool>visited(minimum_time.size() + 1);
+pair<ld,ld> Map::dijkstra(int s, int dest) {
+	vector<ld> minimum_time(g.size() + 1); //vector that has minimum time from source to every vertex
+	vector<ld> distance(g.size() + 1); //vector of distance from source to each node
+	vector<int> parent_node(g.size() + 1);
+	vector<bool> visited(minimum_time.size() + 1);
 
-	for (int i = 0; i < minimum_time.size(); i++)//initialize time to infinity
+	for (int i = 0; i < minimum_time.size(); i++) //initialize time to infinity
 		minimum_time[i] = 1e12;
 
-	minimum_time[s] = 0; //time to source equal 0
+	minimum_time[s] = 0; //time to source equals 0
 
 	priority_queue<pairr, vector<pairr>, greater<pairr> >pq; //minimum heap
-	pq.push({{ 0,0 }, s}); //push time, length, node of source node
+	pq.push({{0, 0}, s}); //push time, length, node of source node
 	parent_node[s] = -1; //parent of source doesn't exist
-	while (!pq.empty())
-	{
+	while (!pq.empty()) {
 		ld time = pq.top().first.first;
 		ld length = pq.top().first.second;
 		int node = pq.top().second;
@@ -144,8 +141,7 @@ pair<ld,ld> Map::dijkstra(int s, int dest)
 		pq.pop();
 		visited[node] = 1;
 
-		for (int i = 0; i < g[node].size(); i++) //add children of current node
-		{
+		for (int i = 0; i < g[node].size(); i++) { //add children of current node
 			int child_node = g[node][i].first;
 			ld child_distance = g[node][i].second.first;
 			ld child_time = g[node][i].second.second;
@@ -153,43 +149,45 @@ pair<ld,ld> Map::dijkstra(int s, int dest)
 			if (visited[child_node])
 				continue;
 
-			if (minimum_time[child_node] > minimum_time[node] + child_time)
-			{
+			if (minimum_time[child_node] > minimum_time[node] + child_time) {
 				minimum_time[child_node] = minimum_time[node] + child_time;
 				distance[child_node] = distance[node] + child_distance;
-				pq.push({ {minimum_time[child_node],distance[child_node]},child_node });
-				parent_node[child_node] = node; //update parent of the this node
+				pq.push({{minimum_time[child_node], distance[child_node]}, child_node});
+				parent_node[child_node] = node; //update parent of this node
 			}
 		}
 	}
+
+	pair<ld, ld> answer = {minimum_time[dest] * 60, distance[dest]};
 
 	build_path(parent_node, dest);
 
 	int start_node = nodes_path[1];
 	int end_node = nodes_path[nodes_path.size()-2];
 
-	int walking_start = abs(distance[dest] - distance[end_node]);
-	int walking_end = distance[start_node];
+	ld walkingToStart = abs(distance[dest] - distance[end_node]);
+	ld walkingToEnd = distance[start_node];
+	ld totalWalkingDist = walkingToStart + walkingToEnd;
 
-	pair<ld, ld>answer = { minimum_time[dest]*60,distance[dest]};
-	cout << "Time = " << answer.first << " Total Distance: " << answer.second << endl;
-	cout << "Walking time " << walking_start+walking_end << endl;
-	cout << "Vehical destince = " << abs(walking_end+walking_start - answer.second) << endl << endl;
+	ld vehicleDist = abs(answer.second - totalWalkingDist);
+
+	cout << "Total time = " << precision << answer.first << " mins" << endl;
+	cout << "Total distance: " << precision << answer.second << " km" << endl;
+	cout << "Walking distance = " << precision << totalWalkingDist << " km"<< endl;
+	cout << "Vehicle distance = " << precision << vehicleDist << " km " << endl << endl;
 
 	return answer;
 }
 
-void Map::build_path(vector<int>parents, int destination_node)
-{
+void Map::build_path(vector<int> parents, int destination_node) {
 	nodes_path.clear();
-	nodes_path.resize(0);
 
 	int node = parents[destination_node];
 	nodes_path.push_front(destination_node);
-	while (node != -1)
-	{
+	while (node != -1) {
 		nodes_path.push_front(node);
 		node = parents[node];
 	}
 }
+
 Map::~Map() {}

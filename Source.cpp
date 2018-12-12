@@ -1,15 +1,15 @@
 #include"Map.h"
 
 int main(){
-	 Map M("map3.txt");
-	 M.viewMap();
+	 Map M("Sample Cases/map3.txt");
+	 //M.viewMap();
 
 	 int q; //number of queries
 	 ld x, y;
 	 pair<ld, ld> s, d; //source, destination
 	 ld r; //maximum walking radius
 	 ifstream file;
-	 file.open("queries3.txt");
+	 file.open("Sample Cases/queries3.txt");
 	 if (file.is_open()) {
 		 file >> q;
 		 for (int i = 0; i < q; i++) {
