@@ -1,5 +1,6 @@
 #pragma once
 #include<iostream>
+#include<iomanip>
 #include<vector>
 #include<istream>
 #include<ostream>
@@ -7,6 +8,7 @@
 #include<fstream>
 #include<string>
 #include<queue>
+#include<functional> //for max priority queue
 using namespace std;
 
 typedef long double ld;
