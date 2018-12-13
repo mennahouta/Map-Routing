@@ -1,7 +1,7 @@
 #include "Map.h"
 
 #define precision setprecision(2) << fixed
-typedef pair<pair<ld, ld>, int>pairr;
+typedef pair<pair<ld, ld>, int> pairr;
 
 Map::Map(string fileName)
 {
@@ -55,20 +55,21 @@ void Map::viewMap(){
 	cout << '\n';
 }
 
-void Map::solveQuery(pair<ld, ld> d, pair<ld, ld> s, ld r) {
-	destination = d;
+void Map::solveQuery(pair<ld, ld> s, pair<ld, ld> d, ld r) {
 	source = s;
+	destination = d;
 	maximumWalkingDist = r * 1000; //r is in meters, and the program uses kilometers
 
+	starts.clear();
+	ends.clear();
+	nodes_path.clear();
+
 	editMap();
-	pair<ld,ld> answer  = dijkstra(n,n+1);
+	pair<ld, ld> answer  = dijkstra(n, n+1);
 	restoreMap();
 }
 
 void Map::editMap() {
-	starts.clear();
-	ends.clear();
-
 	nodes[n] = source;
 	nodes[n + 1] = destination;
 
@@ -80,10 +81,9 @@ void Map::editMap() {
 		//checking if nodes[i] is a possible start position
 		x2 = source.first;
 		y2 = source.second;
-		dist = (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2);
-		dist = sqrt(dist);
+		dist = sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
 		if (dist <= maximumWalkingDist) {
-			time = dist / 5;
+			time = dist / 5; //walking speed = 5 km/h
 			g[n].push_back({i, {dist, time}});
 			g[i].push_back({n, {dist, time}});
 			starts.push_back(i);
@@ -92,8 +92,7 @@ void Map::editMap() {
 		//checking if nodes[i] is a possible end position
 		x2 = destination.first;
 		y2 = destination.second;
-		dist = (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2);
-		dist = sqrt(dist);
+		dist = sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
 		if (dist <= maximumWalkingDist) {
 			time = dist / 5;
 			g[n + 1].push_back({i, {dist, time}});
@@ -120,13 +119,13 @@ void Map::restoreMap() {
 }
 
 pair<ld,ld> Map::dijkstra(int s, int dest) {
-	vector<ld> minimum_time(g.size() + 1); //vector that has minimum time from source to every vertex
-	vector<ld> distance(g.size() + 1); //vector of distance from source to each node
-	vector<int> parent_node(g.size() + 1);
-	vector<bool> visited(minimum_time.size() + 1);
+	vector<ld> minimum_time(n + 2); //vector that has minimum time from source to every vertex
+	vector<ld> distance(n + 2); //vector of distance from source to each node
+	vector<int> parent_node(n + 2);
+	vector<bool> visited(n + 2);
 
-	for (int i = 0; i < minimum_time.size(); i++) //initialize time to infinity
-		minimum_time[i] = 1e12;
+	for (int i = 0; i < n + 2; i++) //initialize time to infinity (long double max)
+		minimum_time[i] = LDBL_MAX; 
 
 	minimum_time[s] = 0; //time to source equals 0
 
@@ -139,9 +138,16 @@ pair<ld,ld> Map::dijkstra(int s, int dest) {
 		int node = pq.top().second;
 
 		pq.pop();
+
+		if (visited[node])
+			continue;
+
 		visited[node] = 1;
 
-		for (int i = 0; i < g[node].size(); i++) { //add children of current node
+		if (node == dest) //stop if destination is reached
+			break;
+
+		for (int i = 0; i < g[node].size(); i++) { //traverse + relax children of current node
 			int child_node = g[node][i].first;
 			ld child_distance = g[node][i].second.first;
 			ld child_time = g[node][i].second.second;
@@ -158,36 +164,44 @@ pair<ld,ld> Map::dijkstra(int s, int dest) {
 		}
 	}
 
-	pair<ld, ld> answer = {minimum_time[dest] * 60, distance[dest]};
-
 	build_path(parent_node, dest);
 
-	int start_node = nodes_path[1];
-	int end_node = nodes_path[nodes_path.size()-2];
+	int startNode = nodes_path[1];
+	int endNode = nodes_path[nodes_path.size() - 2];
 
-	ld walkingToStart = abs(distance[dest] - distance[end_node]);
-	ld walkingToEnd = distance[start_node];
-	ld totalWalkingDist = walkingToStart + walkingToEnd;
+	ld walkingToStartDist = g[n][startNode].second.first;
+	ld walkingToEndDist = g[n + 1][endNode].second.first;
+	ld totalWalkingDist = walkingToStartDist + walkingToEndDist;
+	ld vehicleDist = distance[endNode] - distance[startNode];
+	ld totalDistance = totalWalkingDist + vehicleDist;
 
-	ld vehicleDist = abs(answer.second - totalWalkingDist);
+	ld totalTime = minimum_time[dest] * 60;
+
+	pair<ld, ld> answer = {totalTime, totalDistance};
 
 	cout << "Total time = " << precision << answer.first << " mins" << endl;
 	cout << "Total distance: " << precision << answer.second << " km" << endl;
 	cout << "Walking distance = " << precision << totalWalkingDist << " km"<< endl;
-	cout << "Vehicle distance = " << precision << vehicleDist << " km " << endl;
+	cout << "Vehicle distance = " << precision << vehicleDist << " km " << endl << endl;
 
 	return answer;
 }
 
 void Map::build_path(vector<int> parents, int destination_node) {
-	nodes_path.clear();
-
 	int node = parents[destination_node];
 	nodes_path.push_front(destination_node);
 	while (node != -1) {
 		nodes_path.push_front(node);
 		node = parents[node];
 	}
+
+	//viewing path
+	cout << "Path: source, ";
+	for (int i = 1; i < nodes_path.size() - 1; i++)
+		cout << nodes_path[i] << ", ";
+	cout << "destination.";
+		
+	cout << endl;
 }
 
 Map::~Map() {}
