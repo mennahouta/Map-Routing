@@ -174,7 +174,7 @@ pair<ld,ld> Map::dijkstra(int s, int dest) {
 	cout << "Total time = " << precision << answer.first << " mins" << endl;
 	cout << "Total distance: " << precision << answer.second << " km" << endl;
 	cout << "Walking distance = " << precision << totalWalkingDist << " km"<< endl;
-	cout << "Vehicle distance = " << precision << vehicleDist << " km " << endl << endl;
+	cout << "Vehicle distance = " << precision << vehicleDist << " km " << endl;
 
 	return answer;
 }
