@@ -176,8 +176,6 @@ void Map::dijkstra(int s, int dest) {
 }
 
 void Map::build_path(vector<int> parents, int destination_node) {
-	nodes_path.clear();
-
 	int node = parents[destination_node];
 	nodes_path.push_front(destination_node);
 	while (node != -1) {
