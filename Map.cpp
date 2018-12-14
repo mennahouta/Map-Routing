@@ -4,7 +4,6 @@
 typedef pair<pair<ld, ld>, int> pairr;
 
 Map::Map(string fileName) {
-
 	// Open the filestream
 	ifstream file;
 	file.open(fileName);
@@ -13,6 +12,7 @@ Map::Map(string fileName) {
 		file >> n;			 // Read the first number in the file :: number of nodes
 		nodes.resize(n + 5); // Set the nodes and the graph to have the the N nodes
 		g.resize(n + 5);	 // and extra nodes -needed when pushing extra nodes later
+
 		int id;
 		ld x, y;
 		for(int i = 0; i < n; i++) {
@@ -31,8 +31,8 @@ Map::Map(string fileName) {
 			time = length / speed;
 
 			// Undirected graph, hence the pushing in both nodes
-			g[u].push_back(make_pair(v, make_pair(length, time)));
-			g[v].push_back(make_pair(u, make_pair(length, time)));
+			g[u].push_back({v, {length, time}});
+			g[v].push_back({u, {length, time}});
 		}
 		file.close();
 	}
@@ -110,7 +110,7 @@ void Map::restoreMap() {
 	for (int nodeID : ends) {
 		g[nodeID].pop_back();
 	}
-
+  
     //removing the edges of the start/end nodes from the graph
 	g[n].clear();
 	g[n + 1].clear();
@@ -190,7 +190,7 @@ pair<ld,ld> Map::dijkstra(int s, int dest) {
 	ld totalTime = minimum_time[dest] * 60;
 
 	pair<ld, ld> answer = make_pair(totalTime, totalDistance);
-
+  
 	cout << "Total time = " << precision << answer.first << " mins" << endl;
 	cout << "Total distance: " << precision << answer.second << " km" << endl;
 	cout << "Walking distance = " << precision << totalWalkingDist << " km"<< endl;
