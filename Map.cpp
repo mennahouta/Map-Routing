@@ -204,12 +204,26 @@ void Map::writeOutput() {
 
 	ld totalTime = time* 60; //time[destination]
 
-	pair<ld, ld> answer = make_pair(totalTime, totalDistance);
-
 	cout << precision << totalTime << " mins" << endl;
 	cout << totalDistance << " km" << endl;
 	cout << totalWalkingDist << " km" << endl;
-	cout << vehicleDist << " km " << endl;
+	cout << vehicleDist << " km" << endl;
 }
+
+void Map::writeOutputFile(ofstream& file) {
+
+	ld totalWalkingDist = walkingToStartDist + walkingToEndDist;
+	ld totalDistance = totalWalkingDist + vehicleDist;
+
+	ld totalTime = time* 60; //time[destination]
+
+	pair<ld, ld> answer = make_pair(totalTime, totalDistance);
+	
+	file << precision << totalTime << " mins\n";
+	file << totalDistance << " km\n";
+	file << totalWalkingDist << " km\n";
+	file << vehicleDist << " km\n";
+}
+
 
 Map::~Map() {}

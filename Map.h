@@ -45,5 +45,6 @@ public:
 	void dijkstra(int, int);
 	void build_path(vector<int>, int);
 	void writeOutput();
+	void writeOutputFile(ofstream&);
 	~Map();
 };
