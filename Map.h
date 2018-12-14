@@ -8,7 +8,7 @@
 #include<fstream>
 #include<string>
 #include<queue>
-#include<functional> //for max priority queue
+#include<functional> //for greater<> in priority queue defintion 
 using namespace std;
 
 typedef long double ld;
@@ -44,7 +44,7 @@ public:
 	void restoreMap();
 	void dijkstra(int, int);
 	void build_path(vector<int>, int);
-	void writeOutput();
+	void writeOutput(); //view output on console
 	void writeOutputFile(ofstream&);
 	~Map();
 };
