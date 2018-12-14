@@ -31,8 +31,8 @@ Map::Map(string fileName) {
 			time = length / speed;
 
 			// Undirected graph, hence the pushing in both nodes
-			g[u].push_back({v, {length, time}});
-			g[v].push_back({u, {length, time}});
+			g[u].push_back(make_pair(v, make_pair(length, time)));
+			g[v].push_back(make_pair(u, make_pair(length, time)));
 		}
 		file.close();
 	}
