@@ -29,9 +29,9 @@ class Map
 	ld walkingToStartDist;
 	ld walkingToEndDist;
 
-	vector<ld> time;	 //final time from source to all other vertices after performing Dijkstra
-	vector<ld> distance; //final distance from source to all other vertices after performing Dijkstra 
-
+	ld time;	 //final time from source to all other vertices after performing Dijkstra
+	ld distance; //final distance from source to all other vertices after performing Dijkstra 
+	ld vehicleDist;
 public:
 	//query related data
 	pair<ld, ld> source, destination;

@@ -171,8 +171,13 @@ void Map::dijkstra(int s, int dest) {
 
 	build_path(parent_node, dest);
 
-	this -> time = minimum_time; 
-	this -> distance = distance;
+	this -> time = minimum_time[dest]; 
+	this -> distance = distance[dest];
+
+	int startNode = nodes_path[1];
+	int endNode = nodes_path[nodes_path.size() - 2];
+
+	vehicleDist = distance[endNode] - distance[startNode];
 }
 
 void Map::build_path(vector<int> parents, int destination_node) {
@@ -193,14 +198,11 @@ void Map::build_path(vector<int> parents, int destination_node) {
 }
 
 void Map::writeOutput() {
-	int startNode = nodes_path[1];
-	int endNode = nodes_path[nodes_path.size() - 2];
 
 	ld totalWalkingDist = walkingToStartDist + walkingToEndDist;
-	ld vehicleDist = distance[endNode] - distance[startNode];
 	ld totalDistance = totalWalkingDist + vehicleDist;
 
-	ld totalTime = time[n + 1] * 60; //time[destination]
+	ld totalTime = time* 60; //time[destination]
 
 	pair<ld, ld> answer = make_pair(totalTime, totalDistance);
 
