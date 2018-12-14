@@ -63,7 +63,7 @@ void Map::solveQuery(pair<ld, ld> s, pair<ld, ld> d, ld r) {
 	nodes_path.clear();
 
 	editMap();
-	pair<ld, ld> answer  = dijkstra(n, n+1);
+	dijkstra(n, n + 1);
 	restoreMap();
 }
 
@@ -84,7 +84,7 @@ void Map::editMap() {
 			time = dist / 5; //walking speed = 5 km/h
 			g[n].push_back(make_pair(i, make_pair(dist, time)));
 			g[i].push_back(make_pair(n, make_pair(dist, time)));
-			starts.push_back(i);
+			starts.push_back(make_pair(i, dist));
 		}
 
 		//checking if nodes[i] is a possible end position
@@ -95,20 +95,27 @@ void Map::editMap() {
 			time = dist / 5;
 			g[n + 1].push_back(make_pair(i, make_pair(dist, time)));
 			g[i].push_back(make_pair(n + 1, make_pair(dist, time)));
-			ends.push_back(i);
+			ends.push_back(make_pair(i, dist));
 		}
 	}
 }
 
 void Map::restoreMap() {
-	//removing edges from source to possible starts
-	for (int nodeID : starts) {
-		g[nodeID].pop_back();
+	//removing edges from source to possible starts and extracting walking distance
+	int startNode = nodes_path[1];
+	for (pair<int, ld> node : starts) {
+		if (node.first == startNode) 
+			walkingToStartDist = node.second;
+		g[node.first].pop_back();
+		
 	}
 
-	//removing edges from possible ends to destination
-	for (int nodeID : ends) {
-		g[nodeID].pop_back();
+	//removing edges from possible ends to destination and extracting walking distance
+	int endNode = nodes_path[nodes_path.size() - 2];
+	for (pair<int, ld> node : ends) {
+		if (node.first == endNode)
+			walkingToEndDist = node.second;
+		g[node.first].pop_back();
 	}
   
     //removing the edges of the start/end nodes from the graph
@@ -116,7 +123,7 @@ void Map::restoreMap() {
 	g[n + 1].clear();
 }
 
-pair<ld,ld> Map::dijkstra(int s, int dest) {
+void Map::dijkstra(int s, int dest) {
 	vector<ld> minimum_time(n + 2); //vector that has minimum time from source to every vertex
 	vector<ld> distance(n + 2); //vector of distance from source to each node
 	vector<int> parent_node(n + 2);
@@ -164,42 +171,13 @@ pair<ld,ld> Map::dijkstra(int s, int dest) {
 
 	build_path(parent_node, dest);
 
-	int startNode = nodes_path[1];	// The id of the start node
-	int startNodeIND;				// The index of the start node
-	for(int i=0 ; i < g[n].size() ; i++) {
-		if(startNode == g[n][i].first) {
-			startNodeIND = i;	// The actual index in the graph connection
-			break;
-		}
-	}
-	int endNode = nodes_path[nodes_path.size() - 2];	// The id of the end node
-	int endNodeIND;										// The index of the end node
-	for(int i=0 ; i < g[n + 1].size() ; i++) {
-		if(endNode == g[n + 1][i].first) {
-			endNodeIND = i;	// The actual index in the graph connection
-			break;
-		}
-	}
-
-	ld walkingToStartDist = g[n][startNodeIND].second.first;
-	ld walkingToEndDist = g[n + 1][endNodeIND].second.first;
-	ld totalWalkingDist = walkingToStartDist + walkingToEndDist;
-	ld vehicleDist = distance[endNode] - distance[startNode];
-	ld totalDistance = totalWalkingDist + vehicleDist;
-
-	ld totalTime = minimum_time[dest] * 60;
-
-	pair<ld, ld> answer = make_pair(totalTime, totalDistance);
-  
-	cout << "Total time = " << precision << answer.first << " mins" << endl;
-	cout << "Total distance: " << precision << answer.second << " km" << endl;
-	cout << "Walking distance = " << precision << totalWalkingDist << " km"<< endl;
-	cout << "Vehicle distance = " << precision << vehicleDist << " km " << endl << endl;
-
-	return answer;
+	this -> time = minimum_time; 
+	this -> distance = distance;
 }
 
 void Map::build_path(vector<int> parents, int destination_node) {
+	nodes_path.clear();
+
 	int node = parents[destination_node];
 	nodes_path.push_front(destination_node);
 	while (node != -1) {
@@ -208,12 +186,30 @@ void Map::build_path(vector<int> parents, int destination_node) {
 	}
 
 	//viewing path
-	cout << "Path: source, ";
+	/*cout << "Path: source, ";
 	for (int i = 1; i < nodes_path.size() - 1; i++)
 		cout << nodes_path[i] << ", ";
 	cout << "destination.";
 		
-	cout << endl;
+	cout << endl;*/
+}
+
+void Map::writeOutput() {
+	int startNode = nodes_path[1];
+	int endNode = nodes_path[nodes_path.size() - 2];
+
+	ld totalWalkingDist = walkingToStartDist + walkingToEndDist;
+	ld vehicleDist = distance[endNode] - distance[startNode];
+	ld totalDistance = totalWalkingDist + vehicleDist;
+
+	ld totalTime = time[n + 1] * 60; //time[destination]
+
+	pair<ld, ld> answer = make_pair(totalTime, totalDistance);
+
+	cout << precision << totalTime << " mins" << endl;
+	cout << totalDistance << " km" << endl;
+	cout << totalWalkingDist << " km" << endl;
+	cout << vehicleDist << " km " << endl;
 }
 
 Map::~Map() {}
