@@ -72,7 +72,8 @@ int main() {
 
 		 vector <string> fileNames;
 		 cout << "Map Routing:\n[1] Sample test cases\n[2] Medium test case\n[3] Large test case\n\nEnter your choice[1, 2, 3]: ";
-		 int testCase; cin >> testCase;
+		 int testCase;
+		 cin >> testCase;
 		 if(testCase < 1 || testCase > 3) // Invalid input
 			 return 0;
 		 fileNames = inputFiles(testCase, fileNames);
