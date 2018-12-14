@@ -34,8 +34,10 @@ int main() {
 	
 	 high_resolution_clock::time_point program_start = high_resolution_clock::now(); //Time when the Program started
 	 
-	 int totalExecutionTime = 0;
+	 int totalExecutionTime;
 	 do{
+		 totalExecutionTime = 0;
+
 		 vector <string> fileNames;
 		 cout << "Map Routing:\n[1] Sample test cases\n[2] Medium test case\n[3] Large test case\n\nEnter your choice[1, 2, 3]: ";
 		 int tc; cin >> tc;
