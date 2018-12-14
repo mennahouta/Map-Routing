@@ -216,8 +216,6 @@ void Map::writeOutputFile(ofstream& file) {
 	ld totalDistance = totalWalkingDist + vehicleDist;
 
 	ld totalTime = time* 60; //time[destination]
-
-	pair<ld, ld> answer = make_pair(totalTime, totalDistance);
 	
 	file << precision << totalTime << " mins\n";
 	file << totalDistance << " km\n";
