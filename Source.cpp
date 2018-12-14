@@ -112,7 +112,7 @@ int main() {
 					 M.writeOutputFile(outputFile);
 
 					 auto query_duration = duration_cast<milliseconds>(query1_time2- query1_time1).count(); //Time per query
-					 cout << query_duration << " ms" << endl << endl;
+					 //cout << query_duration << " ms" << endl << endl;
 
 					 outputFile << query_duration << " ms" << endl << endl;
 
