@@ -107,7 +107,7 @@ int main() {
 					 high_resolution_clock::time_point query1_time1 = high_resolution_clock::now(); //Time before query
 					 M.solveQuery(s, d, radius);
 					 high_resolution_clock::time_point query1_time2 = high_resolution_clock::now(); // Time after query
-	
+
 					 //M.writeOutput();
 					 M.writeOutputFile(outputFile);
 
@@ -115,14 +115,14 @@ int main() {
 					 cout << query_duration << " ms" << endl << endl;
 
 					 outputFile << query_duration << " ms" << endl << endl;
-					 
+
 					 totalExecutionTime += query_duration;
 				 }
 				 file.close();
 				 //high_resolution_clock::time_point total_time = high_resolution_clock::now(); //Time after all queries
 				 //auto Total_duration = duration_cast<milliseconds>(total_time- program_start).count(); //Time of the whole program
 				 cout << totalExecutionTime << " ms" <<  endl;
-				 
+         
 				 outputFile << totalExecutionTime << " ms\n";
 			 }
 			 outputFile.close();

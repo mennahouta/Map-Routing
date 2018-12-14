@@ -204,8 +204,6 @@ void Map::writeOutput() {
 
 	ld totalTime = time* 60; //time[destination]
 
-	pair<ld, ld> answer = make_pair(totalTime, totalDistance);
-
 	cout << precision << totalTime << " mins" << endl;
 	cout << totalDistance << " km" << endl;
 	cout << totalWalkingDist << " km" << endl;
