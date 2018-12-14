@@ -1,5 +1,6 @@
 #pragma once
 #include<iostream>
+#include<iomanip>
 #include<vector>
 #include<istream>
 #include<ostream>
@@ -7,6 +8,7 @@
 #include<fstream>
 #include<string>
 #include<queue>
+#include<functional> //for max priority queue
 using namespace std;
 
 typedef long double ld;
@@ -19,10 +21,16 @@ class Map
 	vector<pair<ld, ld>> nodes; //node[id] {X, Y}
 	vector<vector<pair<int, pair<ld, ld>>>> g; // g[id1] {id2, {Length, Time}}
 
-	vector<int> starts; //ids of possible start positions
-	vector<int> ends; //ids of possible end positions
+	vector<pair<int, ld>> starts; //ids of possible start positions + walking distance to them
+	vector<pair<int, ld>> ends;   //ids of possible end positions + walking distance from them
 
 	deque<int>nodes_path; // path of one destination node per query
+
+	ld walkingToStartDist;
+	ld walkingToEndDist;
+
+	vector<ld> time;	 //final time from source to all other vertices after performing Dijkstra
+	vector<ld> distance; //final distance from source to all other vertices after performing Dijkstra 
 
 public:
 	//query related data
@@ -34,7 +42,8 @@ public:
 	void solveQuery(pair<ld, ld>, pair<ld, ld>, ld);
 	void editMap();
 	void restoreMap();
-	pair<ld, ld>dijkstra(int,int);
+	void dijkstra(int, int);
 	void build_path(vector<int>, int);
+	void writeOutput();
 	~Map();
 };

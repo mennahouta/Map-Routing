@@ -40,7 +40,8 @@ int main() {
 
 		 vector <string> fileNames;
 		 cout << "Map Routing:\n[1] Sample test cases\n[2] Medium test case\n[3] Large test case\n\nEnter your choice[1, 2, 3]: ";
-		 int testCase; cin >> testCase;
+		 int testCase;
+     cin >> testCase;
 		 if(testCase < 1 || testCase > 3) // Invalid input
 			 return 0;
 		 fileNames = inputFiles(testCase, fileNames);
@@ -77,8 +78,10 @@ int main() {
 					 totalExecutionTime += query_duration;
 				 }
 				 file.close();
+         
 				 //high_resolution_clock::time_point total_time = high_resolution_clock::now(); //Time after all queries
 				 //auto Total_duration = duration_cast<milliseconds>(total_time- program_start).count(); //Time of the whole program
+
 				 cout << totalExecutionTime << " ms" <<  endl;
 			 }
 		 }
