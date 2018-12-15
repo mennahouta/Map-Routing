@@ -35,6 +35,8 @@ bool checkOutput(string filename, string ourfilename) { // The output file
 	correct.open(filename);
 	ours.open(ourfilename);
 
+	bool flag = true;
+
 	if(correct.is_open() && ours.is_open()) {
 		int queryNum = 1;
 		while(!correct.eof() && !ours.eof()) {
@@ -46,17 +48,24 @@ bool checkOutput(string filename, string ourfilename) { // The output file
 			ld difference = abs(number - our_number);
 			if(type != "ms" && !type.empty()){ // not execution time && not total execution time
 				// THE PRECISION ERROR ID NOT ACCURATE !!!
-				if((type == "km" && difference > 5)||(type == "mins" && difference > 5)){ // a lot of lost precision (case distance) || (case minutes)
-					cout << "Query #" << queryNum << '\n' << number << type << ' ' << our_number << our_type << '\n';
-					return false;
+				if((type == "km" && difference > 0)||(type == "mins" && difference > 0)){ // a lot of lost precision (case distance) || (case minutes)
+					cout << "Query #" << queryNum << "\nCorrect: " << setfill(' ') << setw(8) << number << type;
+					if(type == "mins") cout << "        ";
+					else cout << "          ";
+					cout << "Our Solution: " << setfill(' ') << setw(8) << our_number << our_type;
+					if(type == "mins") cout << "        ";
+					else cout << "          ";
+					cout << "Error = " << setfill(' ') << setw(8) << difference << type << "\n";
+					
+					flag = false;
 				}
 			}
-			if(type == "ms") // A query is done
+			if(type == "ms") // a query is done
 				queryNum++;
 		}
 		ours.close();
 		correct.close();
-		return true;
+		return flag;
 	}
 	cout << "\nSomething went wrong with the files\n";
 	return false;
@@ -112,7 +121,7 @@ int main() {
 					 M.writeOutputFile(outputFile);
 
 					 auto query_duration = duration_cast<milliseconds>(query1_time2- query1_time1).count(); //Time per query
-					 cout << query_duration << " ms" << endl << endl;
+					 //cout << query_duration << " ms" << endl << endl;
 
 					 outputFile << query_duration << " ms" << endl << endl;
 
@@ -132,7 +141,7 @@ int main() {
 			 }
 			 else {
 				cout << "\nWrong Answer!!!\n";
-				return 0;
+				// return 0;
 			 }
 				 
 		 }
