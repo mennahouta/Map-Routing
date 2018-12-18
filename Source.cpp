@@ -30,36 +30,118 @@ vector<string> inputFiles(int testCase, vector<string> v) {
 	return v;
 }
 
-bool checkOutput(string filename, string ourfilename) { // The output file
+void checkOutput(string filename, string ourfilename) { // The output file
 	ifstream correct, ours;
 	correct.open(filename);
 	ours.open(ourfilename);
 
 	if(correct.is_open() && ours.is_open()) {
-		int queryNum = 1;
-		while(!correct.eof() && !ours.eof()) {
-			ld number; string type;
-			ld our_number; string our_type;
-			correct >> number >> type;
-			ours >> our_number >> our_type;
+		int queryNum = 0, correctQueries = 0;
 
-			ld difference = abs(number - our_number);
-			if(type != "ms" && !type.empty()){ // not execution time && not total execution time
-				// THE PRECISION ERROR ID NOT ACCURATE !!!
-				if((type == "km" && difference > 5)||(type == "mins" && difference > 5)){ // a lot of lost precision (case distance) || (case minutes)
-					cout << "Query #" << queryNum << '\n' << number << type << ' ' << our_number << our_type << '\n';
-					return false;
-				}
+		ours.ignore();
+		correct.ignore();
+
+		string correctPath;
+		getline(correct, correctPath);
+
+		string path;
+		getline(ours, path);
+
+		while(!correct.eof() && !ours.eof()) {
+
+			bool answer = true;
+
+			if (path != correctPath)
+			{
+				cout << "Our path: " << path << endl;
+				cout << "Correct path: " << correctPath << endl;
+				answer = false;
 			}
-			if(type == "ms") // A query is done
-				queryNum++;
+
+			ours.ignore();
+			correct.ignore();
+
+			string correctTime, Time;
+			getline(correct, correctTime);
+			getline(ours, Time);
+
+
+			if (correctTime != Time)
+			{
+				cout << "Wrong total time\n";
+				cout << "Time = " << Time << "\nActual time = " << correctTime << endl;
+				answer = false;
+			}
+
+
+			string walking, vehicle, total, correctWalking, correctVehicle, correctTotal;
+
+			correct.ignore();
+			getline(correct, correctVehicle);
+
+			correct.ignore();
+			getline(correct, correctWalking);
+
+			correct.ignore();
+			getline(correct, correctTotal);
+
+			ours.ignore();
+			getline(ours, vehicle);
+
+			ours.ignore();
+			getline(ours, walking);
+
+			ours.ignore();
+			getline(ours, total);
+
+			if (walking != correctWalking)
+			{
+				cout << "Wrong walking distance\n";
+				cout << "Walking distance =  " << walking << "\nActual walking distance =  " << correctWalking << endl;
+				answer = false;
+			}
+
+			if (vehicle != correctVehicle)
+			{
+				cout << "Wrong vehicle distance\n";
+				cout << "Vehicle distance = " << vehicle << "\nActual vehicle distance " << correctVehicle << endl;
+				answer = false;
+			}
+
+			if (total != correctTotal)
+			{
+				cout << "Wrong total distance\n";
+				cout << "Total distance = " << total << "\nActual total distance =  " << correctTotal << endl;
+				answer = false;
+			}
+			if (answer)
+				correctQueries++;
+			else
+				cout << "\nQuery " << queryNum << " is wrong!!!!\n";
+			queryNum++;
+
+			string emptyy;
+			getline(ours, emptyy);
+			getline(correct, emptyy);
+		
+			ours.ignore();
+			correct.ignore();
+
+			string correctPath;
+			getline(correct, correctPath);
+
+			string path;
+			getline(ours, path);
+
+			if (path[path.size() - 1] == 's')
+				break;
 		}
+		cout << correctQueries << " out of " << queryNum << " queries are correct!\n";
 		ours.close();
 		correct.close();
-		return true;
+		return;
 	}
 	cout << "\nSomething went wrong with the files\n";
-	return false;
 }
 
 int main() {
@@ -78,7 +160,7 @@ int main() {
 			 return 0;
 		 fileNames = inputFiles(testCase, fileNames);
 		 for(int i = 0, counter = 1 ; i < fileNames.size() ; i += 3, counter++) { // Skip 3 files per iteration {map, query, output}
-			 cout << "\nCase " << counter << ":\n";
+			 cout << "\nTest Case " << counter << ":\n";
 
 			 Map M(fileNames[i]);
 
@@ -105,45 +187,37 @@ int main() {
 
 					 file >> radius;
 			
-					 high_resolution_clock::time_point query1_time1 = high_resolution_clock::now(); //Time before query
+					 //high_resolution_clock::time_point query1_time1 = high_resolution_clock::now(); //Time before query
 					 M.solveQuery(s, d, radius);
-					 high_resolution_clock::time_point query1_time2 = high_resolution_clock::now(); // Time after query
+					 //high_resolution_clock::time_point query1_time2 = high_resolution_clock::now(); // Time after query
 
 					 //M.writeOutput();
 					 M.writeOutputFile(outputFile);
 
-					 auto query_duration = duration_cast<milliseconds>(query1_time2- query1_time1).count(); //Time per query
+					 //auto query_duration = duration_cast<milliseconds>(query1_time2- query1_time1).count(); //Time per query
 					 //cout << query_duration << " ms" << endl << endl;
 
-					 outputFile << query_duration << " ms" << endl << endl;
+					 //outputFile << query_duration << " ms" << endl << endl;
 
-					 totalExecutionTime += query_duration;
+					 //totalExecutionTime += query_duration;
 				 }
 				 file.close();
-				 //high_resolution_clock::time_point total_time = high_resolution_clock::now(); //Time after all queries
-				 //auto Total_duration = duration_cast<milliseconds>(total_time- program_start).count(); //Time of the whole program
-				 cout << totalExecutionTime << " ms" <<  endl;
-         
+				 high_resolution_clock::time_point total_time = high_resolution_clock::now(); //Time after all queries
+				 auto Total_duration = duration_cast<milliseconds>(total_time - program_start).count(); //Time of the whole program
+				 //cout << totalExecutionTime << " ms" <<  endl;
 				 outputFile << totalExecutionTime << " ms\n";
 			 }
 			 outputFile.close();
 
-			 if(checkOutput(fileNames[i+2], ourFileName)) {
-				 cout << "\nSuccess!!!\n";
-			 }
-			 else {
-				cout << "\nWrong Answer!!!\n";
-				return 0;
-			 }
+			 checkOutput(fileNames[i + 2], ourFileName); //checks right or wrong answer per query
 				 
 		 }
-
-		 cout << "Do you wish to test another case (y/n)? ";
+		 cout << "\nDo you wish to test another case (y/n)? ";
 		 char choice; 
 		 cin >> choice;
 		 if(choice != 'y' && choice != 'Y')
 			 break;
-
+		 cout << endl;
 	 }while(true);
 	 //system("pause");
 	 return 0;

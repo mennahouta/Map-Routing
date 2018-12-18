@@ -121,6 +121,8 @@ void Map::restoreMap() {
     //removing the edges of the start/end nodes from the graph
 	g[n].clear();
 	g[n + 1].clear();
+	nodes_path.pop_back();
+	nodes_path.pop_front();
 }
 
 void Map::dijkstra(int s, int dest) {
@@ -181,13 +183,13 @@ void Map::dijkstra(int s, int dest) {
 }
 
 void Map::build_path(vector<int> parents, int destination_node) {
+
 	int node = parents[destination_node];
-	nodes_path.push_front(destination_node);
+	nodes_path.push_back(destination_node);
 	while (node != -1) {
 		nodes_path.push_front(node);
 		node = parents[node];
 	}
-
 	//viewing path
 	/*cout << "Path: source, ";
 	for (int i = 1; i < nodes_path.size() - 1; i++)
@@ -217,10 +219,17 @@ void Map::writeOutputFile(ofstream& file) {
 
 	ld totalTime = time* 60; //time[destination]
 	
+	int i = 0;
+	for ( ; i < nodes_path.size()-1; i++)
+	{
+		file << nodes_path[i] << " ";
+	}
+	file << nodes_path[i];
+	file << endl;
 	file << precision << totalTime << " mins\n";
-	file << totalDistance << " km\n";
-	file << totalWalkingDist << " km\n";
-	file << vehicleDist << " km\n";
+	file << precision << totalDistance << " km\n";
+	file << precision << totalWalkingDist << " km\n";
+	file << precision << vehicleDist << " km\n" << endl;
 }
 
 
