@@ -3,155 +3,12 @@
 
 using namespace std::chrono;
 
-vector<string> inputFiles(int testCase, vector<string> v) {
-	string mp = "map", q = "queries", out = "output";
-	switch(testCase)
-	{
-	case 1:
-		for(char i = '1' ; i <= '5' ; i++) {
-			v.push_back("[1] Sample Cases\\" + mp + i + ".txt");	// The Folder Path Here
-			v.push_back("[1] Sample Cases\\" + q + i + ".txt");
-			v.push_back("[1] Sample Cases\\" + out + i + ".txt");
-		}
-		break;
-	case 2:
-		v.push_back("[2] Medium Cases\\OLMap.txt");
-		v.push_back("[2] Medium Cases\\OLQueries.txt");
-		v.push_back("[2] Medium Cases\\OLOutput.txt");
-		break;
-	case 3:
-		v.push_back("[3] Large Cases\\SFMap.txt");
-		v.push_back("[3] Large Cases\\SFQueries.txt");
-		v.push_back("[3] Large Cases\\SFOutput.txt");
-		break;
-	default:
-		break;
-	}
-	return v;
-}
+vector<string> inputFiles(int testCase, vector<string> fileNames);
 
-void checkOutput(string filename, string ourfilename) { // The output file
-	ifstream correct, ours;
-	correct.open(filename);
-	ours.open(ourfilename);
-
-	if(correct.is_open() && ours.is_open()) {
-		int queryNum = 0, correctQueries = 0;
-
-		ours.ignore();
-		correct.ignore();
-
-		string correctPath;
-		getline(correct, correctPath);
-
-		string path;
-		getline(ours, path);
-
-		while(!correct.eof() && !ours.eof()) {
-
-			bool answer = true;
-
-			if (path != correctPath)
-			{
-				cout << "Our path: " << path << endl;
-				cout << "Correct path: " << correctPath << endl;
-				answer = false;
-			}
-
-			ours.ignore();
-			correct.ignore();
-
-			string correctTime, Time;
-			getline(correct, correctTime);
-			getline(ours, Time);
-
-
-			if (correctTime != Time)
-			{
-				cout << "Wrong total time\n";
-				cout << "Time = " << Time << "\nActual time = " << correctTime << endl;
-				answer = false;
-			}
-
-
-			string walking, vehicle, total, correctWalking, correctVehicle, correctTotal;
-
-			correct.ignore();
-			getline(correct, correctVehicle);
-
-			correct.ignore();
-			getline(correct, correctWalking);
-
-			correct.ignore();
-			getline(correct, correctTotal);
-
-			ours.ignore();
-			getline(ours, vehicle);
-
-			ours.ignore();
-			getline(ours, walking);
-
-			ours.ignore();
-			getline(ours, total);
-
-			if (walking != correctWalking)
-			{
-				cout << "Wrong walking distance\n";
-				cout << "Walking distance =  " << walking << "\nActual walking distance =  " << correctWalking << endl;
-				answer = false;
-			}
-
-			if (vehicle != correctVehicle)
-			{
-				cout << "Wrong vehicle distance\n";
-				cout << "Vehicle distance = " << vehicle << "\nActual vehicle distance " << correctVehicle << endl;
-				answer = false;
-			}
-
-			if (total != correctTotal)
-			{
-				cout << "Wrong total distance\n";
-				cout << "Total distance = " << total << "\nActual total distance =  " << correctTotal << endl;
-				answer = false;
-			}
-			if (answer)
-				correctQueries++;
-			else
-				cout << "\nQuery " << queryNum << " is wrong!!!!\n";
-			queryNum++;
-
-			string emptyy;
-			getline(ours, emptyy);
-			getline(correct, emptyy);
-		
-			ours.ignore();
-			correct.ignore();
-
-			string correctPath;
-			getline(correct, correctPath);
-
-			string path;
-			getline(ours, path);
-
-			if (path[path.size() - 1] == 's')
-				break;
-		}
-		cout << correctQueries << " out of " << queryNum << " queries are correct!\n";
-		ours.close();
-		correct.close();
-		return;
-	}
-	cout << "\nSomething went wrong with the files\n";
-}
+void checkOutput(string filename, string ourfilename);
 
 int main() {
-	
-	 high_resolution_clock::time_point program_start = high_resolution_clock::now(); //Time when the Program started
-	 
-	 int totalExecutionTime;
 	 do{
-		 totalExecutionTime = 0;
-
 		 vector <string> fileNames;
 		 cout << "Map Routing:\n[1] Sample test cases\n[2] Medium test case\n[3] Large test case\n\nEnter your choice[1, 2, 3]: ";
 		 int testCase;
@@ -160,7 +17,9 @@ int main() {
 			 return 0;
 		 fileNames = inputFiles(testCase, fileNames);
 		 for(int i = 0, counter = 1 ; i < fileNames.size() ; i += 3, counter++) { // Skip 3 files per iteration {map, query, output}
-			 cout << "\nTest Case " << counter << ":\n";
+			 cout << "\nMap " << counter << ":\n";
+
+			 high_resolution_clock::time_point program_start = high_resolution_clock::now(); //Time when this map started
 
 			 Map M(fileNames[i]);
 
@@ -198,13 +57,11 @@ int main() {
 					 //cout << query_duration << " ms" << endl << endl;
 
 					 //outputFile << query_duration << " ms" << endl << endl;
-
-					 //totalExecutionTime += query_duration;
 				 }
 				 file.close();
 				 high_resolution_clock::time_point total_time = high_resolution_clock::now(); //Time after all queries
-				 auto Total_duration = duration_cast<milliseconds>(total_time - program_start).count(); //Time of the whole program
-				 //cout << totalExecutionTime << " ms" <<  endl;
+				 auto totalExecutionTime = duration_cast<milliseconds>(total_time - program_start).count(); //Time of the current map
+				 cout << "Total time of execution: " << totalExecutionTime << " ms" <<  endl;
 				 outputFile << totalExecutionTime << " ms\n";
 			 }
 			 outputFile.close();
@@ -221,4 +78,139 @@ int main() {
 	 }while(true);
 	 //system("pause");
 	 return 0;
+}
+
+vector<string> inputFiles(int testCase, vector<string> fileNames) {
+	string mp = "map", q = "queries", out = "output";
+	switch (testCase) {
+	case 1:
+		for (char i = '1'; i <= '5'; i++) {
+			fileNames.push_back("[1] Sample Cases\\" + mp + i + ".txt");	// The Folder Path Here
+			fileNames.push_back("[1] Sample Cases\\" + q + i + ".txt");
+			fileNames.push_back("[1] Sample Cases\\" + out + i + ".txt");
+		}
+		break;
+	case 2:
+		fileNames.push_back("[2] Medium Cases\\OLMap.txt");
+		fileNames.push_back("[2] Medium Cases\\OLQueries.txt");
+		fileNames.push_back("[2] Medium Cases\\OLOutput.txt");
+		break;
+	case 3:
+		fileNames.push_back("[3] Large Cases\\SFMap.txt");
+		fileNames.push_back("[3] Large Cases\\SFQueries.txt");
+		fileNames.push_back("[3] Large Cases\\SFOutput.txt");
+		break;
+	default:
+		break;
+	}
+	return fileNames;
+}
+
+void checkOutput(string filename, string ourfilename) { // The output file
+	ifstream correct, ours;
+	correct.open(filename);
+	ours.open(ourfilename);
+
+	if (correct.is_open() && ours.is_open()) {
+		int queryNum = 0, correctQueries = 0;
+
+		ours.ignore();
+		correct.ignore();
+
+		string correctPath;
+		getline(correct, correctPath);
+
+		string path;
+		getline(ours, path);
+
+		while (!correct.eof() && !ours.eof()) {
+
+			bool answer = true;
+
+			if (path != correctPath) {
+				cout << "Our path: " << path << endl;
+				cout << "Correct path: " << correctPath << endl;
+				answer = false;
+			}
+
+			ours.ignore();
+			correct.ignore();
+
+			string correctTime, Time;
+			getline(correct, correctTime);
+			getline(ours, Time);
+
+
+			if (correctTime != Time) {
+				cout << "Wrong total time\n";
+				cout << "Time = " << Time << "\nActual time = " << correctTime << endl;
+				answer = false;
+			}
+
+
+			string walking, vehicle, total, correctWalking, correctVehicle, correctTotal;
+
+			correct.ignore();
+			getline(correct, correctVehicle);
+
+			correct.ignore();
+			getline(correct, correctWalking);
+
+			correct.ignore();
+			getline(correct, correctTotal);
+
+			ours.ignore();
+			getline(ours, vehicle);
+
+			ours.ignore();
+			getline(ours, walking);
+
+			ours.ignore();
+			getline(ours, total);
+
+			if (walking != correctWalking) {
+				cout << "Wrong walking distance\n";
+				cout << "Walking distance =  " << walking << "\nActual walking distance =  " << correctWalking << endl;
+				answer = false;
+			}
+
+			if (vehicle != correctVehicle) {
+				cout << "Wrong vehicle distance\n";
+				cout << "Vehicle distance = " << vehicle << "\nActual vehicle distance " << correctVehicle << endl;
+				answer = false;
+			}
+
+			if (total != correctTotal) {
+				cout << "Wrong total distance\n";
+				cout << "Total distance = " << total << "\nActual total distance =  " << correctTotal << endl;
+				answer = false;
+			}
+			if (answer)
+				correctQueries++;
+			else
+				cout << "\nQuery " << queryNum << " is wrong!!!!\n";
+			queryNum++;
+
+			string emptyy;
+			getline(ours, emptyy);
+			getline(correct, emptyy);
+
+			ours.ignore();
+			correct.ignore();
+
+			string correctPath;
+			getline(correct, correctPath);
+
+			string path;
+			getline(ours, path);
+
+			if (path[path.size() - 1] == 's')
+				break;
+		}
+		cout << correctQueries << " out of " << queryNum << " queries are correct!\n";
+		ours.close();
+		correct.close();
+		return;
+	}
+	cout << "\nSomething went wrong with the files\n";
 }

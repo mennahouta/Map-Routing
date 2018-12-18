@@ -204,7 +204,7 @@ void Map::writeOutput() {
 	ld totalWalkingDist = walkingToStartDist + walkingToEndDist;
 	ld totalDistance = totalWalkingDist + vehicleDist;
 
-	ld totalTime = time* 60; //time[destination]
+	ld totalTime = time * 60; //time[destination]
 
 	cout << precision << totalTime << " mins" << endl;
 	cout << totalDistance << " km" << endl;
@@ -217,7 +217,7 @@ void Map::writeOutputFile(ofstream& file) {
 	ld totalWalkingDist = walkingToStartDist + walkingToEndDist;
 	ld totalDistance = totalWalkingDist + vehicleDist;
 
-	ld totalTime = time* 60; //time[destination]
+	ld totalTime = time * 60; //time[destination]
 	
 	int i = 0;
 	for ( ; i < nodes_path.size()-1; i++)
