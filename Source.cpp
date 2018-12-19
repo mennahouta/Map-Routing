@@ -8,6 +8,7 @@ vector<string> inputFiles(int testCase, vector<string> fileNames);
 void checkOutput(string filename, string ourfilename);
 
 int main() {
+	int timeOfAllQueries;
 	 do{
 		 vector <string> fileNames;
 		 cout << "Map Routing:\n[1] Sample test cases\n[2] Medium test case\n[3] Large test case\n\nEnter your choice[1, 2, 3]: ";
@@ -16,6 +17,8 @@ int main() {
 		 if(testCase < 1 || testCase > 3) // Invalid input
 			 return 0;
 		 fileNames = inputFiles(testCase, fileNames);
+
+		 timeOfAllQueries = 0;
 		 for(int i = 0, counter = 1 ; i < fileNames.size() ; i += 3, counter++) { // Skip 3 files per iteration {map, query, output}
 			 cout << "\nMap " << counter << ":\n";
 
@@ -46,14 +49,15 @@ int main() {
 
 					 file >> radius;
 			
-					 //high_resolution_clock::time_point query1_time1 = high_resolution_clock::now(); //Time before query
+					 high_resolution_clock::time_point query1_time1 = high_resolution_clock::now(); //Time before query
 					 M.solveQuery(s, d, radius);
-					 //high_resolution_clock::time_point query1_time2 = high_resolution_clock::now(); // Time after query
+					 high_resolution_clock::time_point query1_time2 = high_resolution_clock::now(); // Time after query
 
 					 //M.writeOutput();
 					 M.writeOutputFile(outputFile);
 
-					 //auto query_duration = duration_cast<milliseconds>(query1_time2- query1_time1).count(); //Time per query
+					 auto queryDuration = duration_cast<milliseconds>(query1_time2- query1_time1).count(); //Time per query
+					 timeOfAllQueries += queryDuration;
 					 //cout << query_duration << " ms" << endl << endl;
 
 					 //outputFile << query_duration << " ms" << endl << endl;
@@ -62,6 +66,7 @@ int main() {
 				 high_resolution_clock::time_point total_time = high_resolution_clock::now(); //Time after all queries
 				 auto totalExecutionTime = duration_cast<milliseconds>(total_time - program_start).count(); //Time of the current map
 				 cout << "Total time of execution: " << totalExecutionTime << " ms" <<  endl;
+				 outputFile << timeOfAllQueries << " ms\n\n";
 				 outputFile << totalExecutionTime << " ms\n";
 			 }
 			 outputFile.close();
